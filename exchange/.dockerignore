@@ -1,0 +1,22 @@
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Pasta de build local (não enviar para o Docker)
+target/
+build/
+
+# Metadados de IDEs
+.idea
+.vscode
+*.iml
+
+# Arquivos do sistema
+.DS_Store
+
+# Dependências do Node (caso use frontend)
+node_modules
