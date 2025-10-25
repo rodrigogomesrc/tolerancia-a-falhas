@@ -1,0 +1,20 @@
+services:
+  airline-hub:
+    build:
+      context: .
+      dockerfile: airlines-hub/Dockerfile
+    container_name: airline-hub
+    ports:
+      - "8081:8081"
+    network_mode: host
+
+  imd-travel:
+    build:
+      context: .
+      dockerfile: imd-travel/Dockerfile
+    container_name: imd-travel
+    ports:
+      - "8080:8080"
+    depends_on:
+      - airline-hub
+    network_mode: host
