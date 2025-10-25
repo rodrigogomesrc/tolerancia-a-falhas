@@ -2,7 +2,6 @@ package br.ufrn.imd.airlines_hub.controller;
 
 import br.ufrn.imd.airlines_hub.model.Flight;
 import br.ufrn.imd.airlines_hub.service.FlightService;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

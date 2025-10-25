@@ -1,8 +1,8 @@
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
 WORKDIR /app
-COPY airlines-hub/pom.xml .
-COPY airlines-hub/src ./src
+COPY imd-travel/pom.xml .
+COPY imd-travel/src ./src
 RUN mvn clean package -DskipTests
 
 
@@ -11,6 +11,6 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-EXPOSE 8081
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
