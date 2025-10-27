@@ -8,6 +8,15 @@ services:
       - "8081:8081"
     network_mode: host
 
+  exchange:
+    build:
+      context: .
+      dockerfile: exchange/Dockerfile
+    container_name: exchange
+    ports:
+      - "8082:8080"
+    network_mode: host
+
   imd-travel:
     build:
       context: .
@@ -18,3 +27,4 @@ services:
     depends_on:
       - airline-hub
     network_mode: host
+
