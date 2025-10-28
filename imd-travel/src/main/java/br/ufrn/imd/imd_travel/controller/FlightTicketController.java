@@ -18,7 +18,7 @@ public class FlightTicketController {
     @PostMapping("/buyTicket")
     public ResponseEntity<String> sellFlight(@RequestParam int flight, @RequestParam String day, long user) {
         // Request 0
-        return ResponseEntity.ok(flightTicketService.buyFlight(flight, day));
+        return ResponseEntity.ok(flightTicketService.buyFlight(flight, day, user));
     }
 
 }

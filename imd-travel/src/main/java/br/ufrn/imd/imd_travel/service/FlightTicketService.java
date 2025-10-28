@@ -16,25 +16,30 @@ public class FlightTicketService {
     @Value("${applications.exchange}")
     private String baseExchangeUrl;
 
+    @Value("${applications.fidelity}")
+    private String baseFidelityUrl;
+
     public FlightTicketService() {
 
     }
 
-    public String buyFlight(int flight, String day) {
+    public String buyFlight(int flight, String day, long user) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Request 1
         ResponseEntity<Flight> responseFlight = restTemplate.getForEntity(baseAirlineHubUrl + "flight?flight=" + flight + "&day=" + day, Flight.class);
 
+        Flight f = null;
         if (responseFlight.getStatusCode().is2xxSuccessful()) {
-            Flight f =  responseFlight.getBody();
+            f =  responseFlight.getBody();
         }
 
         // Request 2
         ResponseEntity<Double> exchangeResponse = restTemplate.getForEntity(baseExchangeUrl + "/convert", Double.class);
 
+        Double cotacaoDolar = null;
         if (exchangeResponse.getStatusCode().is2xxSuccessful()) {
-            Double cotacaoDolar = exchangeResponse.getBody();
+            cotacaoDolar = exchangeResponse.getBody();
         }
 
         // Request 3
@@ -45,7 +50,11 @@ public class FlightTicketService {
             transactionId = responseSell.getBody();
         }
 
-        // TODO: Request 4
+        // Request 4
+        int bonusValue = Math.round(f.getValue());
+
+        String fidelityUrl = baseFidelityUrl + "/bonus?user=" + user + "&bonus=" + bonusValue;
+        ResponseEntity<Void> fidelityResponse = restTemplate.postForEntity(fidelityUrl, HttpEntity.EMPTY, Void.class);
 
         return transactionId;
     }

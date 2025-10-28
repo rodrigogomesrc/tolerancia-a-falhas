@@ -17,6 +17,15 @@ services:
       - "8082:8080"
     network_mode: host
 
+  fidelity:
+    build:
+      context: .
+      dockerfile: fidelity/Dockerfile
+    container_name: fidelity
+    ports:
+      - "8083:8082"
+    network_mode: host
+
   imd-travel:
     build:
       context: .
