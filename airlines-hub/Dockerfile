@@ -1,8 +1,8 @@
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
 WORKDIR /app
-COPY airlines-hub/pom.xml .
-COPY airlines-hub/src ./src
+COPY pom.xml .
+COPY src ./src
 RUN mvn clean package -DskipTests
 
 

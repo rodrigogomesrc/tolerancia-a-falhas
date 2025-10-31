@@ -2,11 +2,11 @@ FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
-COPY exchange/pom.xml .
+COPY pom.xml .
 
 RUN mvn dependency:go-offline
 
-COPY exchange/src ./src
+COPY src ./src
 
 RUN mvn package -DskipTests
 

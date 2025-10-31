@@ -1,7 +1,7 @@
 services:
   airline-hub:
     build:
-      context: .
+      context: ./airlines-hub
       dockerfile: airlines-hub/Dockerfile
     container_name: airlines-hub
     ports:
@@ -10,7 +10,7 @@ services:
 
   exchange:
     build:
-      context: .
+      context: ./exchange
       dockerfile: exchange/Dockerfile
     container_name: exchange
     ports:
@@ -19,7 +19,7 @@ services:
 
   fidelity:
     build:
-      context: .
+      context: ./fidelity
       dockerfile: fidelity/Dockerfile
     container_name: fidelity
     ports:
@@ -28,7 +28,7 @@ services:
 
   imd-travel:
     build:
-      context: .
+      context: ./imd-travel
       dockerfile: imd-travel/Dockerfile
     container_name: imd-travel
     ports:
