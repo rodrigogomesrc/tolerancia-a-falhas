@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: airlines-hub/Dockerfile
-    container_name: airline-hub
+    container_name: airlines-hub
     ports:
       - "8081:8081"
     network_mode: host
