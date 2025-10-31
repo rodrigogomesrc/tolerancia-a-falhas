@@ -15,7 +15,9 @@ O sistema é composto por 4 microserviços em containers Docker:
 
 1. Certifique-se de ter o Docker e Docker Compose instalados
 2. Na pasta raiz do projeto, execute:
-> docker compose up
+```
+docker compose up
+```
 
 Após subir o sistema, os serviços estarão disponíveis em:
 - http://localhost:8080 → imd-travel
@@ -28,6 +30,8 @@ Após subir o sistema, os serviços estarão disponíveis em:
 
 1. Certifique-se de ter o Docker instalado
 2. Entre na pasta do microserviço, e.g. no caso do microserviço airlines-hub
-> cd airlines-hub
->  docker build -t airlines-hub .
-> docker run -p 8081:8080 airlines-hub
+```
+cd airlines-hub
+docker build -t airlines-hub .
+docker run -p 8081:8080 airlines-hub
+```
