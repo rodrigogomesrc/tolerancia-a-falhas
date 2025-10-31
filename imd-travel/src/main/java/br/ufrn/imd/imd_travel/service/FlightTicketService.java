@@ -27,7 +27,7 @@ public class FlightTicketService {
         RestTemplate restTemplate = new RestTemplate();
 
         // Request 1
-        ResponseEntity<Flight> responseFlight = restTemplate.getForEntity(baseAirlineHubUrl + "flight?flight=" + flight + "&day=" + day, Flight.class);
+        ResponseEntity<Flight> responseFlight = restTemplate.getForEntity(baseAirlineHubUrl + "/flight?flight=" + flight + "&day=" + day, Flight.class);
 
         Flight f = null;
         if (responseFlight.getStatusCode().is2xxSuccessful()) {
@@ -43,7 +43,7 @@ public class FlightTicketService {
         }
 
         // Request 3
-        ResponseEntity<String> responseSell = restTemplate.postForEntity(baseAirlineHubUrl + "sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class);
+        ResponseEntity<String> responseSell = restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class);
 
         String transactionId = null;
         if (responseSell.getStatusCode().is2xxSuccessful()) {
