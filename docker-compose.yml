@@ -1,41 +1,43 @@
 services:
   airline-hub:
-    build:
-      context: ./airlines-hub
-      dockerfile: airlines-hub/Dockerfile
+    build: ./airlines-hub
     container_name: airlines-hub
     ports:
       - "8081:8081"
-    network_mode: host
-
+    networks:
+      - app-network
   exchange:
-    build:
-      context: ./exchange
-      dockerfile: exchange/Dockerfile
+    build: ./exchange
     container_name: exchange
     ports:
-      - "8082:8080"
-    network_mode: host
+      - "8082:8082"
+    networks:
+      - app-network
 
   fidelity:
-    build:
-      context: ./fidelity
-      dockerfile: fidelity/Dockerfile
+    build: ./fidelity
     container_name: fidelity
     ports:
-      - "8083:8082"
-    network_mode: host
+      - "8083:8083"
+    networks:
+      - app-network
 
   imd-travel:
-    build:
-      context: ./imd-travel
-      dockerfile: imd-travel/Dockerfile
+    build: ./imd-travel
     container_name: imd-travel
     ports:
       - "8080:8080"
+    environment:
+      - AIRLINES_HUB_URL=http://airlines-hub:8081
+      - EXCHANGE_URL=http://exchange:8082
+      - FIDELITY_URL=http://fidelity:8083
     depends_on:
       - airline-hub
       - fidelity
       - exchange
-    network_mode: host
+    networks:
+      - app-network
 
+networks:
+  app-network:
+    driver: bridge
