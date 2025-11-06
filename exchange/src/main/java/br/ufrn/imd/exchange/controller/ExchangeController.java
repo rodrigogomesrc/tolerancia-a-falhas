@@ -15,6 +15,7 @@ public class ExchangeController {
 
     private final ExchangeService exchangeService;
 
+    // Fail (Omission, 0.2, 0s)
     private static final double FAILURE_PROBABILITY = 0.10; // 10%
     private static final long FAILURE_DURATION_MS = 5000;   // 5 segundos
 
