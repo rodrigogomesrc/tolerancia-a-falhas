@@ -23,7 +23,7 @@ public class FlightTicketService {
 
     }
 
-    public ResponseEntity<String> buyFlight(int flight, String day, long user) {
+    public String buyFlight(int flight, String day, long user) {
         RestTemplate restTemplate = new RestTemplate();
         boolean falha = false;
 
@@ -67,9 +67,9 @@ public class FlightTicketService {
         }
 
         if (falha) {
-            return ResponseEntity.status(500).body("Falha ao processar a compra do voo.");
+            throw new RuntimeException("Purchase failed");
         }
 
-        return ResponseEntity.ok(transactionId);
+        return transactionId;
     }
 }
