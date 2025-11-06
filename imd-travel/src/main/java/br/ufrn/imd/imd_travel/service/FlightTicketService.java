@@ -25,6 +25,7 @@ public class FlightTicketService {
 
     public String buyFlight(int flight, String day, long user) {
         RestTemplate restTemplate = new RestTemplate();
+        boolean falha = false;
 
         // Request 1
         ResponseEntity<Flight> responseFlight = restTemplate.getForEntity(baseAirlineHubUrl + "/flight?flight=" + flight + "&day=" + day, Flight.class);
@@ -32,6 +33,8 @@ public class FlightTicketService {
         Flight f = null;
         if (responseFlight.getStatusCode().is2xxSuccessful()) {
             f =  responseFlight.getBody();
+        } else if (responseFlight.getStatusCode().is5xxServerError()) {
+            falha = true;
         }
 
         // Request 2
@@ -40,6 +43,8 @@ public class FlightTicketService {
         Double cotacaoDolar = null;
         if (exchangeResponse.getStatusCode().is2xxSuccessful()) {
             cotacaoDolar = exchangeResponse.getBody();
+        } else if (exchangeResponse.getStatusCode().is5xxServerError()) {
+           falha = true;
         }
 
         // Request 3
@@ -48,6 +53,8 @@ public class FlightTicketService {
         String transactionId = null;
         if (responseSell.getStatusCode().is2xxSuccessful()) {
             transactionId = responseSell.getBody();
+        } else if (responseSell.getStatusCode().is5xxServerError()) {
+            falha = true;
         }
 
         // Request 4
@@ -55,6 +62,13 @@ public class FlightTicketService {
 
         String fidelityUrl = baseFidelityUrl + "/bonus?user=" + user + "&bonus=" + bonusValue;
         ResponseEntity<Void> fidelityResponse = restTemplate.postForEntity(fidelityUrl, HttpEntity.EMPTY, Void.class);
+        if (fidelityResponse.getStatusCode().is5xxServerError()) {
+            falha = true;
+        }
+
+        if (falha) {
+            throw new RuntimeException("Purchase failed");
+        }
 
         return transactionId;
     }
