@@ -39,6 +39,7 @@ public class FlightController {
         Flight f = this.flightService.getFlight(flight, day);
 
         if (random.nextDouble() < OMISSION_FAILURE_PROBABILITY) {
+            System.out.println("Omission failure");
             sleep(Long.MAX_VALUE);
         }
         return ResponseEntity.ok(f);
@@ -51,11 +52,13 @@ public class FlightController {
             isDelaying.compareAndSet(true, false);
 
         } else if(isDelaying.get()) {
+            System.out.println("Time failure");
             sleep(5000);
 
         } else if (random.nextDouble() < TIME_FAILURE_PROBABILITY) { // Decide aleatoriamente se deve entrar em estado de falha de temporização
             if (isDelaying.compareAndSet(false, true)) {
                 timeFailureStartTime.set(System.currentTimeMillis());
+                System.out.println("Time failure");
                 sleep(5000);
             }
         }
