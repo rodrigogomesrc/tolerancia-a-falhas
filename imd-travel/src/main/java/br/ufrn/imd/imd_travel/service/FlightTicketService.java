@@ -23,7 +23,7 @@ public class FlightTicketService {
 
     }
 
-    public String buyFlight(int flight, String day, long user) {
+    public String buyFlight(int flight, String day, long user, boolean ft) {
         RestTemplate restTemplate = new RestTemplate();
         boolean falha = false;
 

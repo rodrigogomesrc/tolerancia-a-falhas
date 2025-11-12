@@ -16,11 +16,11 @@ public class FlightTicketController {
     public FlightTicketController() {}
 
     @PostMapping("/buyTicket")
-    public ResponseEntity<String> sellFlight(@RequestParam int flight, @RequestParam String day, @RequestParam long user) {
+    public ResponseEntity<String> sellFlight(@RequestParam int flight, @RequestParam String day, @RequestParam long user, @RequestParam boolean ft) {
         // Request 0
         String transactionId = "";
         try {
-            transactionId = flightTicketService.buyFlight(flight, day, user);
+            transactionId = flightTicketService.buyFlight(flight, day, user, ft);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao comprar passagem: " + e.getMessage());
         }
