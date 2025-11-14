@@ -23,8 +23,10 @@ public class CotacaoService {
     }
 
     public Double cotacaoRequest(){
+        System.out.println("Iniciando cotacao request");
         ResponseEntity<Double> exchangeResponse = restTemplate.getForEntity(baseExchangeUrl + "/convert", Double.class);
         Double cotacaoDolar = null;
+        System.out.println("Response Status Cotação: " + exchangeResponse.getStatusCode());
         if (exchangeResponse.getStatusCode().is2xxSuccessful()) {
             cotacaoDolar = exchangeResponse.getBody();
         }
@@ -36,17 +38,16 @@ public class CotacaoService {
     public Double getCotacao(){
         Double cotacaoDolar = cotacaoRequest();
         if (cotacaoDolar != null) {
-            System.out.println("Pegando cotação do serviço");
             cacheCotacao.add(cotacaoDolar);
             return cotacaoDolar;
-        } else {
-            throw new RuntimeException("Falha em obter a cotação do dólar");
         }
+        return null;
     }
 
 
-    public Double getCotacaoFallback(){
-        System.out.println("Pegando cotação do cache no fallback");
+    public Double getCotacaoFallback(Exception e){
+        System.out.println("Pegando cotação do cache no fallback.");
+        e.printStackTrace();
         return cacheCotacao.getAverage();
     }
 
