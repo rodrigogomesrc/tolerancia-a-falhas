@@ -22,6 +22,7 @@ public class FlightTicketController {
         try {
             transactionId = flightTicketService.buyFlight(flight, day, user, ft);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Erro ao comprar passagem: " + e.getMessage());
         }
         return ResponseEntity.ok(transactionId);

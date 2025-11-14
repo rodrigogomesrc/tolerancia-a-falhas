@@ -14,9 +14,6 @@ public class FlightTicketService {
     @Value("${applications.arlines-hub}")
     private String baseAirlineHubUrl;
 
-    @Value("${applications.exchange}")
-    private String baseExchangeUrl;
-
     @Value("${applications.fidelity}")
     private String baseFidelityUrl;
 
@@ -78,6 +75,7 @@ public class FlightTicketService {
         if (fidelityResponse.getStatusCode().is5xxServerError()) {
             falha = true;
         }
+
 
         if (falha) {
             throw new RuntimeException("Purchase failed");
