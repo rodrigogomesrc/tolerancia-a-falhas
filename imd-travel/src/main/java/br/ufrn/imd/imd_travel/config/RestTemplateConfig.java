@@ -1,5 +1,6 @@
 package br.ufrn.imd.imd_travel.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
@@ -8,21 +9,28 @@ import org.springframework.web.client.RestTemplate;
 import java.net.http.HttpClient;
 import java.time.Duration;
 
-
 @Configuration
 public class RestTemplateConfig {
 
-    private static final int TIMEOUT_MS = 2000;
+    @Bean
+    @Qualifier("restTemplate2s")
+    public RestTemplate restTemplate2s() {
+        return createRestTemplate(2000);
+    }
 
     @Bean
-    public RestTemplate restTemplate() {
+    @Qualifier("restTemplate5s")
+    public RestTemplate restTemplate5s() {
+        return createRestTemplate(5000);
+    }
 
+    private RestTemplate createRestTemplate(int timeoutMs) {
         var client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofMillis(TIMEOUT_MS))
+                .connectTimeout(Duration.ofMillis(timeoutMs))
                 .build();
 
         var requestFactory = new JdkClientHttpRequestFactory(client);
-        requestFactory.setReadTimeout(TIMEOUT_MS);
+        requestFactory.setReadTimeout(timeoutMs);
 
         return new RestTemplate(requestFactory);
     }

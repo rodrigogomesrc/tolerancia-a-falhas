@@ -1,5 +1,6 @@
 package br.ufrn.imd.imd_travel.controller;
 
+import br.ufrn.imd.imd_travel.exception.ServiceUnavailableException;
 import br.ufrn.imd.imd_travel.service.FlightTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ public class FlightTicketController {
         String transactionId = "";
         try {
             transactionId = flightTicketService.buyFlight(flight, day, user, ft);
+        } catch (ServiceUnavailableException e){
+            return ResponseEntity.status(500).body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Erro ao comprar passagem: " + e.getMessage());
