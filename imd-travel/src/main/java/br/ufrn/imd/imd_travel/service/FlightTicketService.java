@@ -19,9 +19,11 @@ public class FlightTicketService {
 
 
     private final CotacaoService cotacaoService;
+    private final FlightService flightService;
 
-    public FlightTicketService(CotacaoService cotacaoService) {
+    public FlightTicketService(CotacaoService cotacaoService, FlightService flightService) {
         this.cotacaoService = cotacaoService;
+        this.flightService = flightService;
     }
 
     public String buyFlight(int flight, String day, long user, boolean ft) {
@@ -35,12 +37,13 @@ public class FlightTicketService {
         }
 
         // Request 1 - Consultar voo
-        ResponseEntity<Flight> responseFlight = restTemplate.getForEntity(baseAirlineHubUrl + "/flight?flight=" + flight + "&day=" + day, Flight.class);
-
-        Flight f = null;
-        if (responseFlight.getStatusCode().is2xxSuccessful()) {
-            f =  responseFlight.getBody();
-        } else if (responseFlight.getStatusCode().is5xxServerError()) {
+        Flight f;
+        if(ft){
+            f = flightService.getFlightResiliente(flight, day);
+        } else {
+            f = flightService.getFlightSemResiliencia(flight, day);
+        }
+        if (f == null) {
             falha = true;
         }
 

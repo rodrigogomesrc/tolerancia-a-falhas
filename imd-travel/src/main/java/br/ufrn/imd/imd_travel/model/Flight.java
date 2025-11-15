@@ -39,4 +39,12 @@ public class Flight {
         this.value = value;
     }
 
+    public String toString() {
+        return "Flight{" +
+                "flight=" + flight +
+                ", day='" + day + '\'' +
+                ", value=" + value +
+                '}';
+    }
+
 }
