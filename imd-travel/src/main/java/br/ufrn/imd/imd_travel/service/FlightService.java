@@ -6,6 +6,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -63,5 +64,19 @@ public class FlightService {
             throw new ServiceUnavailableException("Serviço de consulta de voos indisponível. Tente novamente mais tarde.");
         }
         return f;
+    }
+
+    public String sellFlightTicketSemResiliencia(int flight, String day, RestTemplate restTemplate) {
+        ResponseEntity<String> responseSell = restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class);
+
+        String transactionId = null;
+        if (responseSell.getStatusCode().is2xxSuccessful()) {
+            transactionId = responseSell.getBody();
+        }
+        return transactionId;
+    }
+
+    public String sellFlightTicketComResiliencia(int flight, String day, RestTemplate restTemplate) {
+        return null;
     }
 }

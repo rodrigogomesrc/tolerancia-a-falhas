@@ -64,13 +64,15 @@ public class FlightTicketService {
             falha = true;
         }
 
-        // Request 3 - Vender passagem
-        ResponseEntity<String> responseSell = restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class);
-
+        // Request 3 - Vender passagem // TODO: Deixar tolerante a falhas
         String transactionId = null;
-        if (responseSell.getStatusCode().is2xxSuccessful()) {
-            transactionId = responseSell.getBody();
-        } else if (responseSell.getStatusCode().is5xxServerError()) {
+        if (ft) {
+            transactionId = flightService.sellFlightTicketComResiliencia(flight, day, restTemplate);
+        } else {
+            transactionId = flightService.sellFlightTicketSemResiliencia(flight, day, restTemplate);
+        }
+
+        if (transactionId == null) {
             falha = true;
         }
 
