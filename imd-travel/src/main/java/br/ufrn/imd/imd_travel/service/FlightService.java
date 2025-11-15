@@ -1,8 +1,10 @@
 package br.ufrn.imd.imd_travel.service;
 
+import br.ufrn.imd.imd_travel.exception.ServiceUnavailableException;
 import br.ufrn.imd.imd_travel.model.Flight;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,7 @@ public class FlightService {
     private final RestTemplate restTemplate;
     private final CacheService cacheService;
 
-    public FlightService(RestTemplate restTemplate, CacheService cacheService) {
+    public FlightService(@Qualifier("restTemplate5s") RestTemplate restTemplate, CacheService cacheService) {
         this.restTemplate = restTemplate;
         this.cacheService = cacheService;
     }
@@ -51,13 +53,15 @@ public class FlightService {
         }
     }
 
-    public Flight getFlightFallback(int flight, String day, Exception e) {
+    public Flight getFlightFallback(int flight, String day, Exception e) throws ServiceUnavailableException {
         System.out.println("\nPegando voo do cache no fallback.\n");
         e.printStackTrace();
         String key = "flight_" + flight + "_" + day;
         Flight f = (Flight) cacheService.get(key);
         System.out.println("Voo recuperado do cache: " + f);
+        if (f == null) {
+            throw new ServiceUnavailableException("Serviço de consulta de voos indisponível. Tente novamente mais tarde.");
+        }
         return f;
-        //return (Flight) cacheService.get(key);
     }
 }

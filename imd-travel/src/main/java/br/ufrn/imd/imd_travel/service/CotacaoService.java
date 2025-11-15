@@ -17,7 +17,7 @@ public class CotacaoService {
     private final BufferCacheService cacheCotacao;
     private final RestTemplate restTemplate;
 
-    public CotacaoService(@Qualifier("cotacao") BufferCacheService cacheCotacao, RestTemplate restTemplate) {
+    public CotacaoService(@Qualifier("cotacao") BufferCacheService cacheCotacao, @Qualifier("restTemplate5s") RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.cacheCotacao = cacheCotacao;
     }

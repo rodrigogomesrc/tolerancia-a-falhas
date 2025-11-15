@@ -1,5 +1,6 @@
 package br.ufrn.imd.imd_travel.service;
 
+import br.ufrn.imd.imd_travel.exception.ServiceUnavailableException;
 import br.ufrn.imd.imd_travel.model.Flight;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -38,13 +39,16 @@ public class FlightTicketService {
 
         // Request 1 - Consultar voo
         Flight f;
-        if(ft){
-            f = flightService.getFlightResiliente(flight, day);
-        } else {
-            f = flightService.getFlightSemResiliencia(flight, day);
-        }
-        if (f == null) {
-            falha = true;
+        try {
+            if (ft) {
+                f = flightService.getFlightResiliente(flight, day);
+            } else {
+                f = flightService.getFlightSemResiliencia(flight, day);
+            }
+        } catch (ServiceUnavailableException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Falha ao processar compra de passagem.", e);
         }
 
         // Request 2 - Consultar cotação do dólar
