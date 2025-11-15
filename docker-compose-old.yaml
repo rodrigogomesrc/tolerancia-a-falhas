@@ -1,22 +1,11 @@
-version: "3.8"
-
 services:
-  airline-hub-1:
+  airline-hub:
     build: ./airlines-hub
-    container_name: airlines-hub-1
+    container_name: airlines-hub
     ports:
       - "8081:8081"
     networks:
       - app-network
-
-  airline-hub-2:
-    build: ./airlines-hub
-    container_name: airlines-hub-2
-    ports:
-      - "8091:8081"
-    networks:
-      - app-network
-
   exchange:
     build: ./exchange
     container_name: exchange
@@ -33,28 +22,17 @@ services:
     networks:
       - app-network
 
-  nginx-proxy:
-    image: nginx:latest
-    container_name: nginx-proxy
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    networks:
-      - app-network
-    depends_on:
-      - airline-hub-1
-      - airline-hub-2
-
   imd-travel:
     build: ./imd-travel
     container_name: imd-travel
     ports:
       - "8080:8080"
     environment:
-      - AIRLINES_HUB_URL=http://nginx-proxy:80
+      - AIRLINES_HUB_URL=http://airlines-hub:8081
       - EXCHANGE_URL=http://exchange:8082
       - FIDELITY_URL=http://fidelity:8083
     depends_on:
-      - nginx-proxy
+      - airline-hub
       - fidelity
       - exchange
     networks:
