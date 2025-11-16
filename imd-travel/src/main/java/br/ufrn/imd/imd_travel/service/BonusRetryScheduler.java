@@ -21,7 +21,7 @@ public class BonusRetryScheduler {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 30000)
     public void retry() {
 
         BonusOperation op;
