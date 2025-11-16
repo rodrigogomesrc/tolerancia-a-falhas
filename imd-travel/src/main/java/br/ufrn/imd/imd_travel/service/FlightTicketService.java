@@ -12,9 +12,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FlightTicketService {
 
-    @Value("${applications.arlines-hub}")
-    private String baseAirlineHubUrl;
-
     @Value("${applications.fidelity}")
     private String baseFidelityUrl;
 
@@ -66,13 +63,23 @@ public class FlightTicketService {
 
         // Request 3 - Vender passagem // TODO: Deixar tolerante a falhas
         String transactionId = null;
+        ResponseEntity<String> responseSell;
         if (ft) {
-            transactionId = flightService.sellFlightTicketComResiliencia(flight, day, restTemplate);
+            try {
+                responseSell = flightService.sellFlightTicketComResiliencia(flight, day, restTemplate).get();
+
+            } catch (Exception e) {
+                System.out.println("time limiter ativado: serviço de vendas demorou muito para responder.");
+                throw new RuntimeException("O serviço de vendas está demorando para responder. Tente novamente mais tarde.");
+            }
+
         } else {
-            transactionId = flightService.sellFlightTicketSemResiliencia(flight, day, restTemplate);
+            responseSell = flightService.sellFlightTicketSemResiliencia(flight, day, restTemplate);
         }
 
-        if (transactionId == null) {
+        if (responseSell.getStatusCode().is2xxSuccessful()) {
+            transactionId = responseSell.getBody();
+        } else {
             falha = true;
         }
 
