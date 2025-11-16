@@ -21,10 +21,12 @@ public class FlightTicketService {
 
     private final CotacaoService cotacaoService;
     private final FlightService flightService;
+    private final BonusQueueService bonusQueueService;
 
-    public FlightTicketService(CotacaoService cotacaoService, FlightService flightService) {
+    public FlightTicketService(CotacaoService cotacaoService, FlightService flightService, BonusQueueService bonusQueueService) {
         this.cotacaoService = cotacaoService;
         this.flightService = flightService;
+        this.bonusQueueService = bonusQueueService;
     }
 
     public String buyFlight(int flight, String day, long user, boolean ft) {
@@ -78,11 +80,15 @@ public class FlightTicketService {
         int bonusValue = Math.round(f.getValue());
 
         String fidelityUrl = baseFidelityUrl + "/bonus?user=" + user + "&bonus=" + bonusValue;
-        ResponseEntity<Void> fidelityResponse = restTemplate.postForEntity(fidelityUrl, HttpEntity.EMPTY, Void.class);
-        if (fidelityResponse.getStatusCode().is5xxServerError()) {
-            falha = true;
-        }
 
+        try {
+            restTemplate.postForEntity(fidelityUrl, HttpEntity.EMPTY, Void.class);
+        } catch (Exception e) {
+            if (ft) {
+                // Trabalho adiável (Deferrable Work)
+                bonusQueueService.enqueueBonus(user, bonusValue);
+            }
+        }
 
         if (falha) {
             throw new RuntimeException("Purchase failed");
