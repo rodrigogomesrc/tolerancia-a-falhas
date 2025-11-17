@@ -61,7 +61,7 @@ public class FlightTicketService {
             falha = true;
         }
 
-        // Request 3 - Vender passagem // TODO: Deixar tolerante a falhas
+        // Request 3 - Vender passagem
         String transactionId = null;
         ResponseEntity<String> responseSell;
         if (ft) {

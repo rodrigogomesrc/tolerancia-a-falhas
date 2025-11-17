@@ -2,6 +2,7 @@ package br.ufrn.imd.imd_travel.service;
 
 import br.ufrn.imd.imd_travel.exception.ServiceUnavailableException;
 import br.ufrn.imd.imd_travel.model.Flight;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -74,7 +75,12 @@ public class FlightService {
     }
 
     @TimeLimiter(name = "airlinesHubSell")
+    @Bulkhead(name = "airlinesHubSell", type = Bulkhead.Type.THREADPOOL, fallbackMethod = "buildFallBackGetData")
     public CompletableFuture<ResponseEntity<String>> sellFlightTicketComResiliencia(int flight, String day, RestTemplate restTemplate) {
         return CompletableFuture.supplyAsync( () -> restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class));
+    }
+
+    public void buildFallBackGetData(Throwable t) {
+        throw new RuntimeException("Serviço de vendas do voo sobrecarregado. Tente novamente mais tarde.");
     }
 }
