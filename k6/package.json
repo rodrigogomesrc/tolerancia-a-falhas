@@ -1,0 +1,16 @@
+{
+  "name": "k6-load-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/k6": "^0.54.0",
+    "k6": "^0.0.0"
+  },
+  "scripts": {
+    "test:all": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --out csv=results/results_all_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+    "test:smoke": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --env SCENARIO=smoke --out csv=results/results_smoke_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+    "test:load": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --env SCENARIO=load --out csv=results/results_load_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+    "test:spike": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --env SCENARIO=spike --out csv=results/results_spike_$(date +%Y-%m-%d_%H-%M-%S).csv script.js"
+  }
+}
