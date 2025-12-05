@@ -1,6 +1,7 @@
 package br.ufrn.imd.imd_travel.service;
 
 import br.ufrn.imd.imd_travel.model.BonusOperation;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,17 +14,16 @@ public class BonusRetryScheduler {
     private final BonusQueueService bonusQueueService;
     private final RestTemplate restTemplate;
 
-    @Value("${service.fidelity.url}")
+    @Value("${applications.fidelity}")
     private String baseFidelityUrl;
 
-    public BonusRetryScheduler(BonusQueueService bonusQueueService, RestTemplate restTemplate) {
+    public BonusRetryScheduler(BonusQueueService bonusQueueService, @Qualifier("restTemplate5s") RestTemplate restTemplate) {
         this.bonusQueueService = bonusQueueService;
         this.restTemplate = restTemplate;
     }
 
     @Scheduled(fixedDelay = 30000)
     public void retry() {
-
         BonusOperation op;
 
         while ((op = bonusQueueService.dequeueBonus()) != null) {

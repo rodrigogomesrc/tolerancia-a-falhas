@@ -25,3 +25,6 @@ replay_pid*
 
 # Itellij
 /.idea/
+
+node_modules/
+results/

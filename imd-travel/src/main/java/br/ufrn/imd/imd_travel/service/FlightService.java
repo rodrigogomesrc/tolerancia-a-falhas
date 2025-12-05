@@ -80,7 +80,7 @@ public class FlightService {
         return CompletableFuture.supplyAsync( () -> restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class));
     }
 
-    public void buildFallBackGetData(Throwable t) {
+    public void buildFallBackGetData(int flight, String day, Throwable t) {
         throw new RuntimeException("Serviço de vendas do voo sobrecarregado. Tente novamente mais tarde.");
     }
 }
