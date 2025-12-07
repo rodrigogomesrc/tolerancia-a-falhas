@@ -5,12 +5,18 @@
   "license": "MIT",
   "devDependencies": {
     "@types/k6": "^0.54.0",
-    "k6": "^0.0.0"
+    "k6": "^0.54.0"
   },
   "scripts": {
-    "test:all": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --out csv=results/results_all_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
-    "test:smoke": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --env SCENARIO=smoke --out csv=results/results_smoke_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
-    "test:load": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --env SCENARIO=load --out csv=results/results_load_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
-    "test:spike": "mkdir -p results && K6_WEB_DASHBOARD=true k6 run --env SCENARIO=spike --out csv=results/results_spike_$(date +%Y-%m-%d_%H-%M-%S).csv script.js"
+    "test:all": "mkdir -p results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=results/report_all_$(date +%Y-%m-%d_%H-%M-%S).html k6 run --out csv=results/results_all_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+
+    "test:smoke:ft": "mkdir -p results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=results/report_smoke_ft_$(date +%Y-%m-%d_%H-%M-%S).html k6 run --env SCENARIO=smoke --env FT=true --out csv=results/results_smoke_ft_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+    "test:smoke:no-ft": "mkdir -p results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=results/report_smoke_noft_$(date +%Y-%m-%d_%H-%M-%S).html k6 run --env SCENARIO=smoke --env FT=false --out csv=results/results_smoke_noft_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+
+    "test:load:ft": "mkdir -p results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=results/report_load_ft_$(date +%Y-%m-%d_%H-%M-%S).html k6 run --env SCENARIO=load --env FT=true --out csv=results/results_load_ft_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+    "test:load:no-ft": "mkdir -p results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=results/report_load_noft_$(date +%Y-%m-%d_%H-%M-%S).html k6 run --env SCENARIO=load --env FT=false --out csv=results/results_load_noft_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+
+    "test:spike:ft": "mkdir -p results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=results/report_spike_ft_$(date +%Y-%m-%d_%H-%M-%S).html k6 run --env SCENARIO=spike --env FT=true --out csv=results/results_spike_ft_$(date +%Y-%m-%d_%H-%M-%S).csv script.js",
+    "test:spike:no-ft": "mkdir -p results && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=results/report_spike_noft_$(date +%Y-%m-%d_%H-%M-%S).html k6 run --env SCENARIO=spike --env FT=false --out csv=results/results_spike_noft_$(date +%Y-%m-%d_%H-%M-%S).csv script.js"
   }
 }

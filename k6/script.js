@@ -12,7 +12,9 @@ const SCENARIOS = {
         startVUs: 0,
         stages: [
             { duration: '30s', target: 20 },
-            { duration: '1m', target: 20 },
+            { duration: '45s', target: 50 },
+            { duration: '1m', target: 120 },
+            { duration: '45s', target: 50 },
             { duration: '30s', target: 0 },
         ],
     },
@@ -27,6 +29,8 @@ const SCENARIOS = {
 };
 
 const currentScenario = __ENV.SCENARIO || 'all';
+// Captura a variável de ambiente FT (se for 'true', ativa, senão desativa)
+const isFaultTolerance = __ENV.FT === 'true';
 
 let selectedScenarios = {};
 
@@ -48,13 +52,11 @@ export const options = {
     scenarios: selectedScenarios,
 };
 
-const BASE_URL = 'http://localhost:8080/buyTicket?flight=1234&day=23&user=167&ft=true';
+// URL Dinâmica baseada na flag de tolerância a falhas
+const BASE_URL = `http://localhost:8080/buyTicket?flight=1234&day=23&user=167&ft=${isFaultTolerance}`;
 
 export default function () {
     const res = http.post(BASE_URL);
-
-    console.log('STATUS:', res.status);
-    console.log('BODY:', res.body);
 
     check(res, {
         'status success': (r) => r.status === 200 || r.status === 201,
