@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,7 +32,8 @@ public class FlightService {
 
     @CircuitBreaker(name = "airlinesHub")
     @Retry(name = "airlinesHub", fallbackMethod = "getFlightFallback")
-    public Flight getFlightResiliente(int flight, String day) {
+    @Async
+    public CompletableFuture<Flight> getFlightResiliente(int flight, String day) {
         ResponseEntity<Flight> responseFlight = restTemplate.getForEntity(
                 baseAirlineHubUrl + "/flight?flight=" + flight + "&day=" + day, Flight.class);
 
@@ -40,25 +42,26 @@ public class FlightService {
             Flight f = responseFlight.getBody();
             String key = "flight_" + flight + "_" + day;
             cacheService.put(key, f);
-            return f;
+            return CompletableFuture.completedFuture(f);
         } else {
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
     }
 
-    public Flight getFlightSemResiliencia(int flight, String day) {
+    @Async
+    public CompletableFuture<Flight> getFlightSemResiliencia(int flight, String day) {
         ResponseEntity<Flight> responseFlight = restTemplate.getForEntity(
                 baseAirlineHubUrl + "/flight?flight=" + flight + "&day=" + day, Flight.class);
         System.out.println("Response Status Voo: " + responseFlight.getStatusCode());
 
         if (responseFlight.getStatusCode().is2xxSuccessful()) {
-            return responseFlight.getBody();
+            return CompletableFuture.completedFuture(responseFlight.getBody());
         } else {
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
     }
 
-    public Flight getFlightFallback(int flight, String day, Exception e) throws ServiceUnavailableException {
+    public CompletableFuture<Flight> getFlightFallback(int flight, String day, Exception e) throws ServiceUnavailableException {
         System.out.println("\nPegando voo do cache no fallback.\n");
         e.printStackTrace();
         String key = "flight_" + flight + "_" + day;
@@ -67,15 +70,17 @@ public class FlightService {
         if (f == null) {
             throw new ServiceUnavailableException("Serviço de consulta de voos indisponível. Tente novamente mais tarde.");
         }
-        return f;
+        return CompletableFuture.completedFuture(f);
     }
 
-    public ResponseEntity<String> sellFlightTicketSemResiliencia(int flight, String day, RestTemplate restTemplate) {
-        return restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class);
+    @Async
+    public CompletableFuture<ResponseEntity<String>> sellFlightTicketSemResiliencia(int flight, String day, RestTemplate restTemplate) {
+        return CompletableFuture.completedFuture(restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class));
     }
 
-    @TimeLimiter(name = "airlinesHubSell")
     @Bulkhead(name = "airlinesHubSell", type = Bulkhead.Type.THREADPOOL, fallbackMethod = "buildFallBackGetData")
+    @TimeLimiter(name = "airlinesHubSell")
+    @Async
     public CompletableFuture<ResponseEntity<String>> sellFlightTicketComResiliencia(int flight, String day, RestTemplate restTemplate) {
         return CompletableFuture.supplyAsync( () -> restTemplate.postForEntity(baseAirlineHubUrl + "/sell?flight=" + flight + "&day=" + day, HttpEntity.EMPTY, String.class));
     }

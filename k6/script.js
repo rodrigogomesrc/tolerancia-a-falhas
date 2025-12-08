@@ -11,22 +11,56 @@ const SCENARIOS = {
         executor: 'ramping-vus',
         startVUs: 0,
         stages: [
+            { duration: '30s', target: 5 },
+            { duration: '2m', target:  5 },
+            { duration: '30s', target: 10 },
+            { duration: '2m', target: 10 },
             { duration: '30s', target: 20 },
-            { duration: '1m', target: 20 },
-            { duration: '30s', target: 0 },
+            { duration: '2m', target: 20 },
+            { duration: '30s', target: 40 },
+            { duration: '2m', target: 40 },
         ],
     },
     spike: {
         executor: 'ramping-vus',
         startVUs: 0,
         stages: [
-            { duration: '10s', target: 100 },
-            { duration: '1m', target: 0 },
+            { duration: '30s', target: 120 },
+            { duration: '30s', target: 0 },
         ],
+    },
+    load_low: {
+        executor: 'ramping-vus',
+        startVUs: 0,
+        stages: [
+            { duration: '30s', target: 20 },
+            { duration: '1m', target: 20 },
+            { duration: '30s', target: 0 },
+        ]
+    },
+    load_avg: {
+        executor: 'ramping-vus',
+        startVUs: 0,
+        stages: [
+            { duration: '30s', target: 50 },
+            { duration: '1m', target: 50 },
+            { duration: '30s', target: 0 },
+        ]
+    },
+    load_high: {
+        executor: 'ramping-vus',
+        startVUs: 0,
+        stages: [
+            { duration: '30s', target: 20 },
+            { duration: '45s', target: 50 },
+            { duration: '1m', target: 120 },
+            { duration: '45s', target: 50 },
+            { duration: '30s', target: 0 },
+        ]
     },
 };
 
-const currentScenario = __ENV.SCENARIO || 'all';
+const currentScenario = __ENV.SCENARIO || 'load';
 
 let selectedScenarios = {};
 

@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 
 @Service
 public class FlightTicketService {
@@ -37,7 +40,7 @@ public class FlightTicketService {
         }
 
         // Request 1 - Consultar voo
-        Flight f;
+        CompletableFuture<Flight> f;
         try {
             if (ft) {
                 f = flightService.getFlightResiliente(flight, day);
@@ -45,7 +48,7 @@ public class FlightTicketService {
                 f = flightService.getFlightSemResiliencia(flight, day);
             }
         } catch (ServiceUnavailableException e) {
-            throw e;
+            throw new RuntimeException("Falha ao processar compra de passagem, servico indisponivel.", e);
         } catch (Exception e) {
             throw new RuntimeException("Falha ao processar compra de passagem.", e);
         }
@@ -72,11 +75,16 @@ public class FlightTicketService {
 
             } catch (Exception e) {
                 System.out.println("time limiter ativado: serviço de vendas demorou muito para responder.");
-                throw new RuntimeException("O serviço de vendas está demorando para responder. Tente novamente mais tarde.");
+                throw new RuntimeException("O serviço de vendas está demorando para responder. Tente novamente mais tarde:", e);
             }
 
         } else {
-            responseSell = flightService.sellFlightTicketSemResiliencia(flight, day, restTemplate);
+            try {
+                responseSell = flightService.sellFlightTicketSemResiliencia(flight, day, restTemplate).get();
+            } catch (Exception e) {
+                System.out.println("time limiter ativado: serviço de vendas demorou muito para responder.");
+                throw new RuntimeException("O serviço de vendas está demorando para responder. Tente novamente mais tarde.");
+            }
         }
 
         if (responseSell.getStatusCode().is2xxSuccessful()) {
@@ -86,7 +94,12 @@ public class FlightTicketService {
         }
 
         // Request 4 - Adicionar pontos de fidelidade
-        int bonusValue = Math.round(f.getValue());
+        int bonusValue = 0;
+        try {
+            bonusValue = Math.round(f.get().getValue());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
         String fidelityUrl = baseFidelityUrl + "/bonus?user=" + user + "&bonus=" + bonusValue;
 
