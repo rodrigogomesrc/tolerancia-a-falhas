@@ -22,8 +22,11 @@ const SCENARIOS = {
         executor: 'ramping-vus',
         startVUs: 0,
         stages: [
-            { duration: '10s', target: 100 },
-            { duration: '1m', target: 0 },
+            { duration: '10s', target: 10 },
+            { duration: '1s', target: 120 },
+            { duration: '30s', target: 120 },
+            { duration: '1s', target: 10 },
+            { duration: '10s', target: 0 }
         ],
     },
 };
